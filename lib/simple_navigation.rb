@@ -32,11 +32,11 @@ module SimpleNavigation
           item_options = { :class => item[:options][:class].clone || '' }
           item_options[:class] << ' first' if index == 0
           item_options[:class] << ' last'  if index == navigation[:menus].size - 1
-          render_menu(item, item_options)
+          render_menu(item, item_options).html_safe
         end
       end
 
-      content_tag(:ul, menus || '', settings)
+      content_tag(:ul, menus.join.html_safe || '', settings).html_safe
 
     end # simple_navigation(name)
 
@@ -53,7 +53,7 @@ module SimpleNavigation
 
         # Render sub-menus first so we can detect if current menu
         # is between child menu's
-        menus = ''
+        menus = ''.html_safe
         if menu.has_key?(:menus) && !menu[:menus].empty?
           menus = menu[:menus].enum_with_index.collect do |item, index|
             item_options = { :class => item[:options][:class].clone || '' }
@@ -61,7 +61,7 @@ module SimpleNavigation
             item_options[:class] << ' last'  if index == menu[:menus].size - 1
             render_menu(item, item_options)
           end
-          menus = content_tag(:ul, menus)
+          menus = content_tag(:ul, menus.join.html_safe).html_safe
         end
 
         # Is this menu is the current?
@@ -75,7 +75,7 @@ module SimpleNavigation
         end
 
         # Render menu
-        content_tag(:li, render_menu_title(menu) + menus, options)
+        content_tag(:li, (render_menu_title(menu) + menus).html_safe, options).html_safe
 
       end # render_menu(menu)
 
@@ -96,7 +96,7 @@ module SimpleNavigation
             menu[:name].to_s.titleize
           end
         end
-        link_to(content_tag(:span, title), (menu.has_key?(:url) ? url_for(menu[:url]) : "#" ))
+        link_to(content_tag(:span, title), (menu.has_key?(:url) ? url_for(menu[:url]) : "#" )).html_safe
       end # render_menu_title(menu)
 
       # Detects if the menu being rendered is the current
